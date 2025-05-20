@@ -17,24 +17,8 @@ def load_data():
     full['datetime'] = pd.to_datetime(full['timestamp'], unit='s')
     return full
 
-data_load_state = st.text('Loading data...')
-data_load_state.text("Done! (using st.cache_data)")
+full_df = load_data()
 
 
-selected_genre = st.sidebar.selectbox("Select Genre", sorted(full['primary_genre'].unique()))
-filtered_df = full[full['primary_genre'] == selected_genre]
-
-st.subheader(f"Rating Distribution for {selected_genre}")
-rating_counts = filtered_df['rating'].value_counts().sort_index()
-st.bar_chart(rating_counts)
-
-st.subheader(f"Yearly Release Trend for {selected_genre}")
-year_counts = filtered_df['year'].value_counts().sort_index()
-st.line_chart(year_counts)
-
-st.subheader(f"Most Common Tags for {selected_genre}")
-common_tags = filtered_df['tag'].value_counts().head(10)
-st.write(common_tags)
-
-st.subheader("Sample Movies")
-st.dataframe(filtered_df[['title', 'year', 'rating', 'tag']].dropna().head(10))
+full_df_load_state = st.text('Loading data...')
+full_df_load_state.text("Done! (using st.cache_data)")
