@@ -21,8 +21,8 @@ data_load_state = st.text('Loading data...')
 data_load_state.text("Done! (using st.cache_data)")
 
 
-selected_genre = st.sidebar.selectbox("Select Genre", sorted(full_df['primary_genre'].unique()))
-filtered_df = full_df[full_df['primary_genre'] == selected_genre]
+selected_genre = st.sidebar.selectbox("Select Genre", sorted(full['primary_genre'].unique()))
+filtered_df = full[full['primary_genre'] == selected_genre]
 
 st.subheader(f"Rating Distribution for {selected_genre}")
 rating_counts = filtered_df['rating'].value_counts().sort_index()
