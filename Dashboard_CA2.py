@@ -6,9 +6,9 @@ import re
 
 
 def load_data():
-    movies = pd.read_csv("/mnt/data/movies.csv", encoding='ISO-8859-1')
-    ratings = pd.read_csv("/mnt/data/rating.csv", encoding='ISO-8859-1')
-    tags = pd.read_csv("/mnt/data/tags.csv", encoding='ISO-8859-1')
+    movies = pd.read_csv("movies.csv", encoding='ISO-8859-1')
+    ratings = pd.read_csv("rating.csv", encoding='ISO-8859-1')
+    tags = pd.read_csv("tags.csv", encoding='ISO-8859-1')
     merged = pd.merge(ratings, movies, on='movieId', how='left')
     full = pd.merge(merged, tags[['movieId', 'tag']], on='movieId', how='left')
     full['year'] = full['title'].apply(lambda x: int(re.findall(r'\((\d{4})\)', x)[0]) if re.search(r'\((\d{4})\)', x) else None)
