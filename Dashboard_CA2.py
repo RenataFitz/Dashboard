@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import re
 
 st.title("🎬 Online Retail Movie Insights Dashboard")
@@ -41,4 +42,4 @@ st.write(common_tags)
 
 # Movie preview
 st.subheader("Sample Movies")
-st.dataframe(filtered_df[['title', 'year', 'rating', 'tag']].dropna().head(10))
+st.dataframe(filtered_df[['title', 'year', 'rating', 'tag']].dropna().head(10))0))
