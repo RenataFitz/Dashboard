@@ -42,4 +42,4 @@ st.write(common_tags)
 
 # Movie preview
 st.subheader("Sample Movies")
-st.dataframe(filtered_df[['title', 'year', 'rating', 'tag']].dropna().head(10))0))
+st.dataframe(filtered_df[['title', 'year', 'rating', 'tag']].dropna().head(10))
