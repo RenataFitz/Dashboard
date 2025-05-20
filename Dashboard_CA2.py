@@ -2,20 +2,27 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-st.title("Movie Dashboard")
+st.title("🎬 Online Retail Movie Insights Dashboard")
 
-DATE_COLUMN='time_stamp'
+# Sidebar Filters
+selected_genre = st.sidebar.selectbox("Select Genre", sorted(full_df['primary_genre'].unique()))
+filtered_df = full_df[full_df['primary_genre'] == selected_genre]
 
-DATA_URL = ('https://github.com/CCT-Dublin/machine-learning-for-business-ca2-RenataFitz')
+# Rating distribution
+st.subheader(f"Rating Distribution for {selected_genre}")
+rating_counts = filtered_df['rating'].value_counts().sort_index()
+st.bar_chart(rating_counts)
 
-@st.cache_data
-def load_data(nrows):
-    data = pd.read_csv(DATA_URL, nrows=nrows)
-    lowercase = lambda x: str(x).lower()
-    data.rename(lowercase, axis='columns', inplace=True)
-    data[DATE_COLUMN] = pd.to_datetime(data[DATE_COLUMN])
-    return data
+# Release trend
+st.subheader(f"Yearly Release Trend for {selected_genre}")
+year_counts = filtered_df['year'].value_counts().sort_index()
+st.line_chart(year_counts)
 
-data_load_state = st.text('Loading data...')
-data = load_data(264505)
-data_load_state.text("Done! (using st.cache_data)")
+# Popular tags
+st.subheader(f"Most Common Tags for {selected_genre}")
+common_tags = filtered_df['tag'].value_counts().head(10)
+st.write(common_tags)
+
+# Movie preview
+st.subheader("Sample Movies")
+st.dataframe(filtered_df[['title', 'year', 'rating', 'tag']].dropna().head(10))
