@@ -1,44 +1,91 @@
+# Streamlit Dashboard for Retail Movie Dataset
 import streamlit as st
 import pandas as pd
-import numpy as np
-import re
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-st.title("🎬 Online Retail Movie Insights Dashboard")
-
+# Load Data
 @st.cache_data
+
 def load_data():
     movies = pd.read_csv("movies.csv", encoding='ISO-8859-1')
     ratings = pd.read_csv("rating.csv", encoding='ISO-8859-1')
     tags = pd.read_csv("tags.csv", encoding='ISO-8859-1')
     merged = pd.merge(ratings, movies, on='movieId', how='left')
     full = pd.merge(merged, tags[['movieId', 'tag']], on='movieId', how='left')
-    full['year'] = full['title'].apply(lambda x: int(re.findall(r'\((\d{4})\)', x)[0]) if re.search(r'\((\d{4})\)', x) else None)
-    full['primary_genre'] = full['genres'].apply(lambda x: x.split('|')[0] if pd.notnull(x) else 'Unknown')
-    full['datetime'] = pd.to_datetime(full['timestamp'], unit='s')
+    full = full.dropna(subset=['tag'])
+    full['primary_genre'] = full['genres'].str.split('|').str[0]
+    full = full.drop(['timestamp', 'genres'], axis=1)
+    full['year'] = full['title'].str.extract(r'\((\d{4})\)').astype(int)
     return full
 
-data_load_state = st.text('Loading data...')
-data_load_state.text("Done! (using st.cache_data)")
+full = load_data()
 
-# Sidebar Filters
-selected_genre = st.sidebar.selectbox("Select Genre", sorted(full_df['primary_genre'].unique()))
-filtered_df = full_df[full_df['primary_genre'] == selected_genre]
+st.title("🎬 Online Retail Movie Analytics Dashboard")
 
-# Rating distribution
-st.subheader(f"Rating Distribution for {selected_genre}")
-rating_counts = filtered_df['rating'].value_counts().sort_index()
-st.bar_chart(rating_counts)
+# Filters
+st.sidebar.header("Filters")
+selected_genre = st.sidebar.selectbox("Select Genre", sorted(full['primary_genre'].unique()))
+selected_year = st.sidebar.slider("Select Year Range", int(full['year'].min()), int(full['year'].max()), (2000, 2020))
+selected_rating = st.sidebar.slider("Minimum Rating", 0.5, 5.0, 3.0, 0.5)
 
-# Release trend
-st.subheader(f"Yearly Release Trend for {selected_genre}")
-year_counts = filtered_df['year'].value_counts().sort_index()
-st.line_chart(year_counts)
+# Apply filters
+filtered = full[(full['primary_genre'] == selected_genre) &
+                (full['year'].between(*selected_year)) &
+                (full['rating'] >= selected_rating)]
 
-# Popular tags
-st.subheader(f"Most Common Tags for {selected_genre}")
-common_tags = filtered_df['tag'].value_counts().head(10)
-st.write(common_tags)
+# Section 1: Genre Popularity
+st.subheader("Genre Popularity by Rating Count")
+genre_counts = full['primary_genre'].value_counts().head(12)
+genre_df = pd.DataFrame(list(genre_counts.items()), columns=['Genre', 'Count'])
+genre_df = genre_df.sort_values(by='Count', ascending=True)
 
-# Movie preview
-st.subheader("Sample Movies")
-st.dataframe(filtered_df[['title', 'year', 'rating', 'tag']].dropna().head(10))
+fig1, ax1 = plt.subplots(figsize=(10, 6))
+sns.barplot(data=genre_df, y='Genre', x='Count', palette='deep', ax=ax1)
+ax1.set_title('Genre Popularity by Rating Count')
+ax1.set_xlabel('Rating Count (per Genre)')
+ax1.set_ylabel('Genre')
+for bar in ax1.patches:
+    ax1.text(
+        bar.get_width() + 10000,
+        bar.get_y() + bar.get_height() / 2,
+        f'{int(bar.get_width()):,}',
+        va='center'
+    )
+st.pyplot(fig1)
+
+# Section 2: Rating Distribution
+st.subheader("Distribution of Ratings")
+rating_counts = full['rating'].value_counts().sort_index()
+fig2, ax2 = plt.subplots(figsize=(8, 5))
+ax2.bar(rating_counts.index.astype(str), rating_counts.values, color='steelblue')
+ax2.set_title('Rating Distribution')
+ax2.set_xlabel('Rating')
+ax2.set_ylabel('Number of Ratings')
+st.pyplot(fig2)
+
+# Section 3: Average Rating by Genre
+st.subheader("Average Rating by Genre")
+genre_means = full.groupby('primary_genre')['rating'].mean().sort_values(ascending=False).reset_index()
+fig3, ax3 = plt.subplots(figsize=(10, 5))
+sns.barplot(data=genre_means, x='primary_genre', y='rating', palette='rocket', ax=ax3)
+ax3.set_title('Average Rating by Genre')
+ax3.set_xlabel('Primary Genre')
+ax3.set_ylabel('Average Rating')
+ax3.tick_params(axis='x', rotation=45)
+st.pyplot(fig3)
+
+# Section 4: Movie Release Trend Over Years
+st.subheader("Movie Release Trend Over Time")
+year_counts = full['year'].value_counts().sort_index()
+fig4, ax4 = plt.subplots(figsize=(12, 5))
+ax4.plot(year_counts.index, year_counts.values, marker='o', linestyle='-', color='teal')
+ax4.set_title('Movie Release Distribution Over Years')
+ax4.set_xlabel('Year')
+ax4.set_ylabel('Number of Ratings')
+ax4.grid(True)
+st.pyplot(fig4)
+
+# Section 5: Filtered Sample View
+st.subheader("Filtered Movies Based on User Selection")
+st.dataframe(filtered[['userId', 'title', 'rating', 'tag', 'primary_genre', 'year']].drop_duplicates().head(20))
