@@ -1,24 +1,25 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-import re
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-st.title("🎬 Online Retail Movie Insights Dashboard")
 
 @st.cache_data
+
 def load_data():
     movies = pd.read_csv("movies.csv", encoding='ISO-8859-1')
     ratings = pd.read_csv("rating.csv", encoding='ISO-8859-1')
     tags = pd.read_csv("tags.csv", encoding='ISO-8859-1')
     merged = pd.merge(ratings, movies, on='movieId', how='left')
     full = pd.merge(merged, tags[['movieId', 'tag']], on='movieId', how='left')
-    full['year'] = full['title'].apply(lambda x: int(re.findall(r'\((\d{4})\)', x)[0]) if re.search(r'\((\d{4})\)', x) else None)
-    full['primary_genre'] = full['genres'].apply(lambda x: x.split('|')[0] if pd.notnull(x) else 'Unknown')
-    full['datetime'] = pd.to_datetime(full['timestamp'], unit='s')
+    full = full.dropna(subset=['tag'])
+    full['primary_genre'] = full['genres'].str.split('|').str[0]
+    full = full.drop(['timestamp', 'genres'], axis=1)
+    full['year'] = full['title'].str.extract(r'\((\d{4})\)').astype(int)
     return full
 
-full_df = load_data()
+full = load_data()
+
+st.title("🎬 Online Retail Movie Analytics Dashboard")
 
 
-full_df_load_state = st.text('Loading data...')
-full_df_load_state.text("Done! (using st.cache_data)")
