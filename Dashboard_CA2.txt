@@ -1,10 +1,9 @@
-# Streamlit Dashboard for Retail Movie Dataset
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Load Data
+
 @st.cache_data
 
 def load_data():
@@ -23,18 +22,17 @@ full = load_data()
 
 st.title("🎬 Online Retail Movie Analytics Dashboard")
 
-# Filters
+
 st.sidebar.header("Filters")
 selected_genre = st.sidebar.selectbox("Select Genre", sorted(full['primary_genre'].unique()))
 selected_year = st.sidebar.slider("Select Year Range", int(full['year'].min()), int(full['year'].max()), (2000, 2020))
 selected_rating = st.sidebar.slider("Minimum Rating", 0.5, 5.0, 3.0, 0.5)
 
-# Apply filters
+
 filtered = full[(full['primary_genre'] == selected_genre) &
                 (full['year'].between(*selected_year)) &
                 (full['rating'] >= selected_rating)]
 
-# Section 1: Genre Popularity
 st.subheader("Genre Popularity by Rating Count")
 genre_counts = full['primary_genre'].value_counts().head(12)
 genre_df = pd.DataFrame(list(genre_counts.items()), columns=['Genre', 'Count'])
@@ -54,7 +52,7 @@ for bar in ax1.patches:
     )
 st.pyplot(fig1)
 
-# Section 2: Rating Distribution
+
 st.subheader("Distribution of Ratings")
 rating_counts = full['rating'].value_counts().sort_index()
 fig2, ax2 = plt.subplots(figsize=(8, 5))
@@ -64,7 +62,7 @@ ax2.set_xlabel('Rating')
 ax2.set_ylabel('Number of Ratings')
 st.pyplot(fig2)
 
-# Section 3: Average Rating by Genre
+
 st.subheader("Average Rating by Genre")
 genre_means = full.groupby('primary_genre')['rating'].mean().sort_values(ascending=False).reset_index()
 fig3, ax3 = plt.subplots(figsize=(10, 5))
@@ -75,7 +73,7 @@ ax3.set_ylabel('Average Rating')
 ax3.tick_params(axis='x', rotation=45)
 st.pyplot(fig3)
 
-# Section 4: Movie Release Trend Over Years
+
 st.subheader("Movie Release Trend Over Time")
 year_counts = full['year'].value_counts().sort_index()
 fig4, ax4 = plt.subplots(figsize=(12, 5))
@@ -86,6 +84,6 @@ ax4.set_ylabel('Number of Ratings')
 ax4.grid(True)
 st.pyplot(fig4)
 
-# Section 5: Filtered Sample View
+
 st.subheader("Filtered Movies Based on User Selection")
 st.dataframe(filtered[['userId', 'title', 'rating', 'tag', 'primary_genre', 'year']].drop_duplicates().head(20))
