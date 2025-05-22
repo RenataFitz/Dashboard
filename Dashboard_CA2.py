@@ -22,6 +22,7 @@ full = load_data()
 
 st.title("🎬 Online Retail Movie Analytics Dashboard")
 
+# Section 1: Top 10 Genres
 st.subheader("FIGURE 1 | Top Ten Genres")
 genre_counts = dash_df['primary_genre'].value_counts().head(10).reset_index()
 genre_counts.columns = ['primary_genre', 'count']
