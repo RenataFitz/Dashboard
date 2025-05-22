@@ -13,12 +13,14 @@ def load_data():
     gdown.download(url, output, quiet=False)
     return pd.read_csv(output)
 
-dash_df = load_data()
-
-dash_df_load_state = st.text('Loading data...')
-dash_df_state.text("Done! (using st.cache_data)")
-
+# Try to load data with error handling
+try:
+    dash_df = load_data()
+except Exception as e:
+    st.error(f"Failed to load data: {e}")
+    st.stop()
 
 st.title("🎬 Online Retail Movie Analytics Dashboard")
 st.write(dash_df.head())
+st.write(dash_df.shape)
 
