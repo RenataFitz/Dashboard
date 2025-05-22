@@ -19,17 +19,16 @@ st.sidebar.header("🔍 Filters")
 
 
 min_year, max_year = int(dash_df['year'].min()), int(dash_df['year'].max())
-min_rating, max_rating = float(dash_df['rating'].min()), float(dash_df['rating'].max())
+
 
 selected_year_range = st.sidebar.slider("Select Year Range", min_year, max_year, (min_year, max_year))
-selected_rating_range = st.sidebar.slider("Select Rating Range", float(min_rating), float(max_rating), (float(min_rating), float(max_rating)))
+
 
 # Filter Data
 filtered_df = dash_df[
     (dash_df['year'] >= selected_year_range[0]) &
     (dash_df['year'] <= selected_year_range[1]) &
-    (dash_df['rating'] >= selected_rating_range[0]) &
-    (dash_df['rating'] <= selected_rating_range[1])
+   
 ]
 
 st.title("🎬 Online Retail Movie Analytics Dashboard")
