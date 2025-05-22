@@ -13,9 +13,9 @@ def load_data():
     gdown.download(url, output, quiet=False)
     return pd.read_csv(output)
 
-df = load_data()
+dash_df = load_data()
 st.title("🎬 Online Retail Movie Analytics Dashboard")
-st.write(df.head())
+st.write(dash_df.head())
 
 # Section 1: Top 10 Genres
 st.subheader("FIGURE 1 | Top Ten Genres")
