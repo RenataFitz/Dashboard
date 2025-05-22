@@ -3,12 +3,9 @@ import pandas as pd
 
 @st.cache_data
 def load_data():
-    file_id = "1Ca5CBnhUL3vhmhoqHfe3CAN62VG8n3wW"
-    url = f"https://drive.google.com/uc?id={file_id}"
+    url = "https://drive.google.com/uc?id=1UuY3I30O-AHSIw_I5QNp8-_JLZxnbrIu"
     return pd.read_csv(url)
 
-dash_df = load_data()
-
-st.title("🎬 Online Retail Movie Analytics Dashboard")
+df = load_data()
 
 
