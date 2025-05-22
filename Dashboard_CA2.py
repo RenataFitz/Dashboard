@@ -24,3 +24,6 @@ st.title("🎬 Online Retail Movie Analytics Dashboard")
 st.write(dash_df.head())
 st.write(dash_df.shape)
 
+genre_counts = dash_df['primary_genre'].value_counts().head(10).reset_index()
+st.write("Top 10 Genres by Count:")
+st.write(genre_counts)
