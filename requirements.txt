@@ -1,0 +1,7 @@
+# Core libraries
+streamlit
+pandas
+matplotlib
+seaborn
+gdown
+
