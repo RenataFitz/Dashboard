@@ -27,7 +27,7 @@ selected_year_range = st.sidebar.slider("Select Year Range", min_year, max_year,
 # Filter Data
 filtered_df = dash_df[
     (dash_df['year'] >= selected_year_range[0]) &
-    (dash_df['year'] <= selected_year_range[1]) &
+    (dash_df['year'] <= selected_year_range[1]) 
  
 ]
 
