@@ -29,12 +29,14 @@ filtered_df = dash_df[
 
 st.title("🎬 Online Retail Movie Analytics Dashboard")
 
+
 st.subheader("Top Ten Genres")
 
 genre_counts = filtered_df['primary_genre'].value_counts().head(10).reset_index()
+genre_counts.columns = ['primary_genre', 'count']
 
+fig, ax = plt.subplots(figsize=(10, 5))
+sns.barplot(data=genre_counts, y='primary_genre', x='count', palette='deep', ax=ax)
 
-sns.barplot(data=genre_counts, y='primary_genre', x='count', palette='deep')
-st.pyplot()
-
+st.pyplot(fig)
 
