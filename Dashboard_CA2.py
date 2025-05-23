@@ -33,8 +33,8 @@ st.subheader("Top Ten Genres")
 
 genre_counts = filtered_df['primary_genre'].value_counts().head(10).reset_index()
 
-fig1, plt.subplots(figsize=(12, 5))
+plt.subplots(figsize=(12, 5))
 sns.barplot(data=genre_counts, y='primary_genre', x='count', palette='deep')
-st.pyplot(fig1)
+st.pyplot()
 
 
