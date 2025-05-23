@@ -32,11 +32,7 @@ st.title("🎬 Online Retail Movie Analytics Dashboard")
 
 st.subheader("Top Ten Genres")
 genre_counts = filtered_df['primary_genre'].value_counts().head(10).reset_index()
-sns.barplot(data=genre_counts, y='primary_genre', x='count', palette='deep')
+st.bar_chart(data=genre_counts, y='primary_genre', x='count', palette='deep')
 
 
-st.subheader("Movie Release Distribution Over Years")
-year_counts = filtered_df['year'].value_counts().sort_index()
-
-plt.plot(year_counts.index, year_counts.values, marker='o', linestyle='-', color='teal')
 
