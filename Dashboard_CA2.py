@@ -32,7 +32,7 @@ st.title("🎬 Online Retail Movie Analytics Dashboard")
 
 st.subheader("Top Ten Genres")
 genre_counts = filtered_df['primary_genre'].value_counts().head(10).reset_index()
-st.bar_chart(genre_counts)
+st.bar_plot(genre_counts)
 
 
 
